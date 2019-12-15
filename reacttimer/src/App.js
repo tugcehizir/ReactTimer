@@ -1,77 +1,40 @@
-import React from 'react';
-import './App.css';
+import React, { Component } from 'react'
 
-class App extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      dateSecondFirst: new Date(),
-      dateSecondFinish: new Date(),
-      dateMinuteFirst: new Date(),
-      dateMinuteFinish: new Date()
-    };
+export default class Timer extends Component {
+  state = {
+    minutes: 0,
+    seconds: 0,
   }
 
   componentDidMount() {
-    const { dateSecondFirst, dateMinuteFirst } = this.state;
-    this.setState({
-      dateSecondFirst: dateSecondFirst.getSeconds(),
-      dateMinuteFirst: dateMinuteFirst.getMinutes()
-    });
-  };
+    this.myInterval = setInterval(() => {
+      const { seconds } = this.state
+      if (seconds > 59) {
+        this.setState(({ minutes }) => ({
+          minutes: minutes + 1,
+          seconds: 0
+        }))
+      }
 
-  handleClick = (event) => {
-    const newDate = new Date();
-    this.setState({
-      dateSecondFinish: newDate.getSeconds(),
-      dateMinuteFinish: newDate.getMinutes()
-    });
+      this.setState(({ seconds }) => ({
+        seconds: seconds + 1
+      }))
+
+
+    }, 1000)
   }
-  showClick = () => {
 
-    console.log('ilk dakika', this.state.dateMinuteFirst);
-    console.log('ilk saniy', this.state.dateSecondFirst);
-
-
-    console.log('son dakika', this.state.dateMinuteFinish);
-    console.log('son saniy', this.state.dateSecondFinish);
-
-    const { dateSecondFinish, dateSecondFirst, dateMinuteFinish, dateMinuteFirst } = this.state;
-
-    let fark = 0;
-    let farkDk = 0;
-    let dk = 0;
-    while (1) {   //Saniye Kontrolü
-      if (dateSecondFinish > dateSecondFirst) {
-        fark = dateSecondFinish - dateSecondFirst;
-      }
-      else if (dateSecondFirst > dateSecondFinish) {
-        fark = (60 - dateSecondFirst) + dateSecondFinish;
-      }
-      if (fark > 60) { return ('Hoşgeldiniz!!') }
-
-      //Dk Kontrolü
-      if (dateMinuteFinish > dateMinuteFirst) {
-        farkDk = dateMinuteFinish - dateMinuteFirst;
-      }
-      else if (dateMinuteFirst > dateMinuteFinish) {
-        farkDk = (60 - dateMinuteFirst) + dateMinuteFinish;
-      }
-
-      return (fark + ' saniyeden beri buradasınız!');
-    }
+  componentWillUnmount() {
+    clearInterval(this.myInterval)
   }
+
   render() {
+    const { minutes, seconds } = this.state
     return (
       <div>
-        <button key='stop' onClick={this.handleClick}>Durdur!</button>
+        <h1>Burada bulunduğunuz süre : {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h1>
 
-        <p key='th'>{this.showClick()}</p>
       </div>
-    );
+    )
   }
 }
-
-
-export default App;
